@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zk-autograd"
+version = "0.3.0"
+description = "zk-Autograd: Zero-Knowledge Training Step Proofs (EZKL + TEE hardening + aggregation)"
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.2",
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+  "pydantic>=2.5",
+  "numpy>=1.26",
+  "requests>=2.31",
+  "tqdm>=4.66",
+  "ezkl>=15.0.0",
+  "boto3>=1.34",
+  "botocore>=1.34",
+  "pytest>=8.0",
+  "hypothesis>=6.0",
+]
+
+[project.optional-dependencies]
+gpu = ["triton>=3.0.0"]
+split = ["onnx>=1.16.0"]
+
+[project.scripts]
+zk-train = "zk_autograd.trainer:cli"
+zk-verify = "verifier.verify_steps:cli"
+zk-setup-zk = "zk_autograd.ezkl_setup:cli"
+zk-generate-evm-verifier = "zk_autograd.evm_verifier:cli"

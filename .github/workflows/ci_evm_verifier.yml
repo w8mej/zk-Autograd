@@ -1,0 +1,26 @@
+# GitHub Actions workflow to generate the EVM verifier contract.
+# This workflow runs manually and produces the Solidity verifier and ABI as artifacts.
+name: ci-evm-verifier
+on: [workflow_dispatch]
+
+jobs:
+  build-solidity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .
+      - name: Install solc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y solc
+      - name: Setup EZKL artifacts
+        run: zk-setup-zk --circuit adam --dim 128 --out prover/keys
+      - name: Generate aggregate verifier
+        run: zk-generate-evm-verifier --key-dir prover/keys --out contracts/generated --aggregated
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evm-verifier
+          path: contracts/generated/

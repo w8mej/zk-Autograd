@@ -1,0 +1,49 @@
+# GitHub Actions workflow for AWS Nitro Enclave CI.
+# Builds the Docker image for the enclave to ensure it compiles correctly.
+name: ci-nitro
+on: [workflow_dispatch]
+jobs:
+  build-enclave-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Install Supply Chain Tools
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.3.0
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0.15.8
+
+      # 2. Build Enclave Image
+      - run: docker build -f deployment/aws-nitro/enclave.Dockerfile -t zk-autograd-enclave:ci .
+
+      # 3. Generate SBOM (Software Bill of Materials)
+      - name: Generate SBOM
+        run: syft zk-autograd-enclave:ci -o spdx-json=enclave.sbom.json
+
+      # 4. Sign Artifacts (PoC with ephemeral key)
+      - name: Sign Image & SBOM
+        run: |
+          # Generate ephemeral key pair for demo purposes
+          cosign generate-key-pair
+
+          # Save image to tarball for signing (since we aren't pushing to a registry)
+          docker save zk-autograd-enclave:ci -o enclave_image.tar
+
+          # Sign the SBOM
+          cosign sign-blob --key cosign.key enclave.sbom.json > enclave.sbom.json.sig
+
+          # Sign the Image Tarball
+          cosign sign-blob --key cosign.key enclave_image.tar > enclave_image.tar.sig
+
+        env:
+          COSIGN_PASSWORD: ""
+
+      # 5. Upload Artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enclave-artifacts
+          path: |
+            enclave.sbom.json
+            enclave.sbom.json.sig
+            enclave_image.tar.sig

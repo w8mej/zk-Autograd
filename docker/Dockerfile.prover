@@ -1,0 +1,28 @@
+# Syntax version for Dockerfile features
+# syntax=docker/dockerfile:1
+
+# Base image: Python 3.11 slim version
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy project configuration and source code
+COPY pyproject.toml /app/
+COPY src/ /app/src/
+COPY prover/ /app/prover/
+
+# Install the package in editable mode
+RUN pip install -e .
+
+# Environment variables for EZKL setup
+ENV EZKL_KEY_DIR=/app/prover/keys
+ENV EZKL_CIRCUIT=adam
+
+# Expose the service port
+EXPOSE 8000
+
+# Command to run the service:
+# 1. Check if keys exist, if not run setup
+# 2. Start the uvicorn server
+CMD bash -lc "if [ ! -f $EZKL_KEY_DIR/pk.key ]; then zk-setup-zk --circuit $EZKL_CIRCUIT --out $EZKL_KEY_DIR; fi && uvicorn prover.service:app --host 0.0.0.0 --port 8000"

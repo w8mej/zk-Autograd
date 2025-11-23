@@ -1,0 +1,61 @@
+# GitHub Actions workflow to build and publish artifacts.
+# This workflow runs on push to main or manual dispatch.
+# It performs the following steps:
+# 1. Sets up Python environment.
+# 2. Generates EZKL artifacts (keys, circuits).
+# 3. Starts a local prover service.
+# 4. Runs a demo training session.
+# 5. Builds toy torrent manifests and the static site.
+# 6. Uploads artifacts and deploys to GitHub Pages.
+name: publish-artifacts
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .
+      - name: Setup EZKL artifacts
+        run: zk-setup-zk --circuit adam --dim 128 --out prover/keys
+      - name: Start prover
+        run: |
+          nohup uvicorn prover.service:app --host 127.0.0.1 --port 8000 &
+          sleep 3
+      - name: Run demo training
+        run: python -m zk_autograd.trainer --steps 5 --prover-url http://127.0.0.1:8000
+      - name: Build toy torrents + site
+        run: |
+          mkdir -p public/torrents
+          python - <<'PY'
+          import os, json, glob
+          from zk_autograd.torrents import create_toy_torrent_bundle
+          runs=[]
+          for rd in sorted(glob.glob("artifacts/run-*")):
+            man = create_toy_torrent_bundle(rd, "public/torrents")
+            mf = json.load(open(os.path.join(rd,"run_manifest.json")))
+            runs.append({
+              "name": os.path.basename(rd),
+              "num_steps": mf["num_steps"],
+              "merkle_root": mf["merkle_root"],
+              "torrent_file": f"torrents/{os.path.basename(rd)}.toy.torrent.json",
+              "magnet": man["magnet"],
+            })
+          os.makedirs("public", exist_ok=True)
+          json.dump(runs, open("public/runs.json","w"), indent=2)
+          PY
+          cp -r webapp/* public/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zk-autograd-artifacts
+          path: artifacts/
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: public

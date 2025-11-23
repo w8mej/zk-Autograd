@@ -1,0 +1,12 @@
+/*
+  style.css
+
+  Basic styling for the artifacts web application.
+  Implements a dark mode theme with card-based layout.
+*/
+body { font-family: system-ui, sans-serif; margin: 0; background: #0b0d10; color: #e8eaed; }
+header { padding: 24px; background: #111418; border-bottom: 1px solid #222; }
+main { padding: 24px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.card { background: #14181d; border: 1px solid #222; border-radius: 14px; padding: 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.35); }
+code, pre { background: #0f1216; padding: 2px 4px; border-radius: 6px; }
+a { color: #7dc4ff; }

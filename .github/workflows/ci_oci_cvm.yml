@@ -1,0 +1,10 @@
+# GitHub Actions workflow for OCI CVM CI.
+# Placeholder for future integration with self-hosted OCI runners.
+name: ci-oci-cvm
+on: [workflow_dispatch]
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "OCI CVM smoke tests should run on self-hosted OCI runners."

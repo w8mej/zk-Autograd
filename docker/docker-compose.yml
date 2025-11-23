@@ -1,0 +1,18 @@
+# Docker Compose configuration for local development.
+# Defines the prover and trainer services.
+services:
+  prover:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.prover
+    ports:
+      - "8000:8000"
+
+  trainer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.trainer
+    environment:
+      PROVER_URL: http://prover:8000
+    depends_on:
+      - prover

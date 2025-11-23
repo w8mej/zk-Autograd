@@ -1,0 +1,23 @@
+# Syntax version for Dockerfile features
+# syntax=docker/dockerfile:1
+
+# Base image: Python 3.11 slim version
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy project configuration and source code
+COPY pyproject.toml README.md /app/
+COPY src/ /app/src/
+COPY prover/ /app/prover/
+COPY verifier/ /app/verifier/
+
+# Install the package in editable mode
+RUN pip install -e .
+
+# Default environment variable for the prover URL
+ENV PROVER_URL=http://prover:8000
+
+# Command to run the trainer script
+CMD ["python", "-m", "zk_autograd.trainer", "--steps", "10"]

@@ -1,0 +1,30 @@
+# GitHub Actions workflow for local CI/CD.
+# Runs on push and pull request events.
+# Performs a smoke test of the ZK proof generation and verification pipeline.
+name: ci-local
+on:
+  push:
+  pull_request:
+
+jobs:
+  zk-proof-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install -e .
+      - name: Setup EZKL artifacts
+        run: zk-setup-zk --circuit adam --dim 128 --out prover/keys
+      - name: Start prover
+        run: |
+          nohup uvicorn prover.service:app --host 127.0.0.1 --port 8000 &
+          sleep 3
+      - name: Run short training
+        run: EZKL_CHUNKS=2 python -m zk_autograd.trainer --steps 2 --prover-url http://127.0.0.1:8000
+      - name: Verify random steps
+        run: |
+          RUN_DIR=$(ls -d artifacts/run-* | tail -n1)
+          zk-verify --run $RUN_DIR --k 1 --key-dir prover/keys
