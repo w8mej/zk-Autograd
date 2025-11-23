@@ -22,10 +22,10 @@ flowchart LR
   end
 
   subgraph Audit["Public Audit Plane"]
-    V[Verifier CLI (EZKL verify)]
-    A[Artifacts: proofs, logs]
-    TOR[Torrents + magnets]
-    W[Web UI (GH Pages)]
+    V["Verifier CLI (EZKL verify)"]
+    A["Artifacts: proofs, logs"]
+    TOR["Torrents + magnets"]
+    W["Web UI (GH Pages)"]
   end
 
   T --> H -->|w_t, grad_t, opt_state| P
@@ -34,7 +34,7 @@ flowchart LR
   A --> V
 ```
 
-**Sequence**
+### Sequence
 
 ```mermaid
 sequenceDiagram
@@ -61,8 +61,10 @@ sequenceDiagram
 EZKL generates Halo2-based zk‑SNARK circuits over ONNX graphs and provides Python bindings for setup, witness generation, proving, and verification. citeturn2search1turn1view0turn2search5
 
 PoC circuits:
+
 - **Adam step** (default): proves `{m_{t+1}, v_{t+1}, w_{t+1}}` from `{w_t, g_t, m_t, v_t, lr, beta1, beta2, eps, t}`.
 - **SGD step** (optional).
+
 ### Proof splitting & aggregation
 
 Large graphs can be split into multiple proofs using EZKL commitments and then aggregated into a single proof. citeturn0search0turn0search16turn0search12
@@ -74,8 +76,8 @@ Set `EZKL_CHUNKS=N` to slice flattened optimizer vectors into N blocks, generate
 EZKL_CHUNKS=4 docker compose up --build
 ```
 
-
 Setup artifacts live in `prover/keys/`:
+
 - `settings.json`, `compiled.ezkl`, `pk.key`, `vk.key`, `kzg.srs`, and `adam_step.onnx`.
 
 Generate them locally:
@@ -88,12 +90,14 @@ zk-setup-zk --circuit adam --dim 128 --out prover/keys
 
 ## Trust assumptions & threat model (PoC)
 
-**Adversaries**
+### Adversaries
+
 - Honest‑but‑curious host observing runtime/logs.
 - Malicious host attempting to fabricate/skip/rollback steps.
 - Malicious auditor sampling proofs.
 
-**Trust anchors**
+### Trust anchors
+
 - **TEE attestation gates proving key release.**
   - Nitro Enclaves attest enclave image PCRs and KMS can restrict key use to a specific enclave measurement. citeturn0search2turn0search6turn0search10turn0search13
   - OCI Confidential VMs use AMD SEV‑based memory encryption and support measurement‑based attestation concepts. citeturn0search7turn0search14turn3search31
@@ -115,6 +119,7 @@ docker compose -f docker/docker-compose.yml up --build
 ```
 
 Artifacts emit to `artifacts/run-*/`:
+
 - `steps.jsonl` – per step metadata + proof hash
 - `proofs/step_XXXXX.proof` – EZKL proofs
 - `merkle_root.txt` – run root
@@ -210,6 +215,7 @@ zk-verify --run artifacts/run-YYYYMMDD-HHMM --k 10 --key-dir prover/keys
 ---
 
 ## License
+
 Apache‑2.0 (suggested).
 
 ## On-chain anchoring (EVM)
