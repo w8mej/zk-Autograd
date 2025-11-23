@@ -18,8 +18,8 @@
 
 ## TEE sealing
 
-- **Nitro:** KMS attestation policy binds key use to enclave PCRs/ImageSha384. citeturn0search6turn0search10turn0search13
-- **OCI CVM:** SEV measurement attestation gates OCI Vault secret release. citeturn0search7turn3search31
+- **Nitro:** KMS attestation policy binds key use to enclave PCRs/ImageSha384. 
+- **OCI CVM:** SEV measurement attestation gates OCI Vault secret release. 
 
 ## Supply Chain Security (SLSA)
 
