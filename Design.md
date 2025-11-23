@@ -15,7 +15,7 @@ The proof reveals only public inputs (commitments, hyper‑params, step index, c
 
 ## Circuit construction
 
-**Backend:** EZKL over ONNX graphs. citeturn2search1turn1view0
+**Backend:** EZKL over ONNX graphs. 
 
 1. `AdamStep` / `SGDStep` module exported to ONNX (see `src/zk_autograd/step_circuit.py`).
 2. Inputs quantized to fixed‑point and mapped to field elements.
@@ -23,26 +23,26 @@ The proof reveals only public inputs (commitments, hyper‑params, step index, c
    - `ezkl.gen_settings()`
    - `ezkl.get_srs()`
    - `ezkl.compile_circuit()`
-   - `ezkl.setup()` citeturn2search0turn2search1turn1view0
+   - `ezkl.setup()` 
 4. Per‑step proving:
    - `ezkl.gen_witness()`
-   - `ezkl.prove()` citeturn2search2turn1view0
+   - `ezkl.prove()` 
 5. Verification:
-   - `ezkl.verify()` in verifier CLI. citeturn2search4turn1view0
+   - `ezkl.verify()` in verifier CLI. 
 
 ## TEE key sealing
 
 ### Nitro
 - Proving key encrypted in KMS.
-- Enclave requests KMS Decrypt with attestation document; KMS releases only if PCR/ImageSha384 matches policy. citeturn0search6turn0search10turn0search13
+- Enclave requests KMS Decrypt with attestation document; KMS releases only if PCR/ImageSha384 matches policy. 
 
 ### OCI CVM
 - Proving key stored as an OCI Vault secret encrypted under a Vault master key.
-- CVM produces SEV attestation report including measurement; a key broker verifies measurement before releasing secret to the VM. citeturn0search7turn3search31
+- CVM produces SEV attestation report including measurement; a key broker verifies measurement before releasing secret to the VM.
 
 ## Replay / rollback defense
 
-Because Nitro enclaves are ephemeral and lack persistent storage, a monotonic counter must live outside the enclave. citeturn3search3turn3search12
+Because Nitro enclaves are ephemeral and lack persistent storage, a monotonic counter must live outside the enclave. 
 
 Design:
 1. Host finalizes Merkle root for run.
@@ -68,7 +68,7 @@ PoC implements `local` backend in `src/zk_autograd/anchoring.py`.
 
 ## Proof splitting per-layer/per-block
 
-EZKL supports splitting large ONNX graphs into multiple circuits using commitments and then aggregating their proofs. citeturn0search0turn0search16turn0search12
+EZKL supports splitting large ONNX graphs into multiple circuits using commitments and then aggregating their proofs. 
 
 This repo exercises that plumbing with a logical block split fallback via `prove_step_chunks()`.
 
@@ -77,6 +77,6 @@ This repo exercises that plumbing with a logical block split fallback via `prove
 Use EZKL to generate Solidity verifiers:
 
 - `create_evm_verifier` for single proofs.
-- `create_evm_verifier_aggr` for aggregated proofs. citeturn0search1turn0search5turn0search9turn0search13
+- `create_evm_verifier_aggr` for aggregated proofs.
 
 Then call `RunAnchor.anchor(...)` with the aggregated proof and public inputs.

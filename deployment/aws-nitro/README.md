@@ -17,11 +17,11 @@ Use `enclave.Dockerfile` and convert to EIF via `nitro-cli build-enclave`.
 ## 3) Seal proving key to enclave measurement
 
 - Enclave requests KMS `Decrypt` with a signed attestation document.
-- KMS policy uses `kms:RecipientAttestation:ImageSha384` / PCR condition keys so **only this EIF measurement can receive plaintext, and it is returned encrypted to the enclave public key.** citeturn0search6turn0search10turn0search13
+- KMS policy uses `kms:RecipientAttestation:ImageSha384` / PCR condition keys so **only this EIF measurement can receive plaintext, and it is returned encrypted to the enclave public key.
 
 ## 4) Replay/Rollback prevention
 
-Nitro enclaves are stateless and have no persistent storage. citeturn3search3turn3search12  
+Nitro enclaves are stateless and have no persistent storage.
 Anchor each run Merkle root to a monotonic counter service:
 - DynamoDB conditional PutItem (counter==prev+1)
 - Or QLDB ledger

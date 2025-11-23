@@ -58,7 +58,7 @@ sequenceDiagram
 
 ## EZKL backend
 
-EZKL generates Halo2-based zk‑SNARK circuits over ONNX graphs and provides Python bindings for setup, witness generation, proving, and verification. citeturn2search1turn1view0turn2search5
+EZKL generates Halo2-based zk‑SNARK circuits over ONNX graphs and provides Python bindings for setup, witness generation, proving, and verification. 
 
 PoC circuits:
 
@@ -67,7 +67,7 @@ PoC circuits:
 
 ### Proof splitting & aggregation
 
-Large graphs can be split into multiple proofs using EZKL commitments and then aggregated into a single proof. citeturn0search0turn0search16turn0search12
+Large graphs can be split into multiple proofs using EZKL commitments and then aggregated into a single proof. 
 
 PoC fallback:
 Set `EZKL_CHUNKS=N` to slice flattened optimizer vectors into N blocks, generate N chunk proofs, and aggregate them into a single `aggregated.pf`.
@@ -99,8 +99,8 @@ zk-setup-zk --circuit adam --dim 128 --out prover/keys
 ### Trust anchors
 
 - **TEE attestation gates proving key release.**
-  - Nitro Enclaves attest enclave image PCRs and KMS can restrict key use to a specific enclave measurement. citeturn0search2turn0search6turn0search10turn0search13
-  - OCI Confidential VMs use AMD SEV‑based memory encryption and support measurement‑based attestation concepts. citeturn0search7turn0search14turn3search31
+  - Nitro Enclaves attest enclave image PCRs and KMS can restrict key use to a specific enclave measurement. 
+  - OCI Confidential VMs use AMD SEV‑based memory encryption and support measurement‑based attestation concepts. 
 - ZK backend is sound.
 - Log integrity via hash‑chain + Merkle root.
 
@@ -150,8 +150,8 @@ It is designed to be a self-contained guide for understanding the end-to-end flo
 See `deployment/aws-nitro/README.md` for EIF build and vsock wiring.  
 **Hardening implemented in design:**
 
-- Proving key stored encrypted in KMS and **released only to enclaves whose attestation PCR0/ImageSha384 matches policy.** citeturn0search6turn0search10
-- Run Merkle roots anchored using an external monotonic counter service (e.g., DynamoDB conditional write) because enclaves have no persistent storage. citeturn3search3turn3search12
+- Proving key stored encrypted in KMS and **released only to enclaves whose attestation PCR0/ImageSha384 matches policy.** 
+- Run Merkle roots anchored using an external monotonic counter service (e.g., DynamoDB conditional write) because enclaves have no persistent storage. 
 
 ### OCI Confidential VM
 
@@ -227,4 +227,4 @@ zk-generate-evm-verifier --key-dir prover/keys --out contracts/generated --aggre
 # deploy EzklVerifier.sol then RunAnchor.sol
 ```
 
-`RunAnchor.sol` enforces monotonic counters and stores Merkle roots only when proofs verify. citeturn0search1turn0search5turn0search9turn0search13
+`RunAnchor.sol` enforces monotonic counters and stores Merkle roots only when proofs verify.

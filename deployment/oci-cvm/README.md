@@ -13,7 +13,7 @@ Use a Confidential VM shape in a private VCN.
 
 ## 3) Seal key to CVM attestation
 - CVM produces SEV attestation report with measurement.
-- Your key broker verifies report before releasing the Vault secret to the VM. citeturn0search7turn3search31
+- Your key broker verifies report before releasing the Vault secret to the VM.
 
 ## 4) Replay/Rollback prevention
 Anchor Merkle roots to:
